@@ -1,17 +1,24 @@
-int ch_array = [ch_num];
+#include "dimmer.h"
+int ch_num = 8;
+//int ch_array[ch_num];
+int ch_array[8];
 int stepSecond = 20; // how manny dimming steps per second
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
 
+Dimmer::Dimmer(int number)
+{}
+
 void Dimmer::init()
 {
-pca.init;
+//pca.init;
 }
 
-void Dimmer:knxParam()
+void Dimmer::knxParam()
 {
     for ( int i=1 ; i<ch_num ; i++ )
     {
+      
             ch_array[i].chType     = knx.param(0+i*10);
             ch_array[i].minDimDay   = knx.param(1+i*10);
             ch_array[i].minDimNight = knx.param(2+i*10);
@@ -45,27 +52,30 @@ void Dimmer:knxParam()
                     {   ch_array[i].tableNight[j] =     ch_array[i].diffDimNight / stepSecond * ch_array[i].timeNight * 16 ;     }
             }
             // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
-            
+        */    
     }
 }
 
 void Dimmer::setGroupObject()
 {
+/*
 go_ch1_switch.dataPointType(DPT_Switch);
 go_ch1_reldim.dataPointType(DPT_);
 go_ch1_absdim.dataPointType(DPT_);
 go_ch1_color.dataPointType(DPT_Colour_RGB);
 go_ch1_state.dataPointType(DPT_Switch);
 go_ch1_dimmer.dataPointType(DPT_);
+*/
 }
 
 void Dimmer::setupCallback()
 {
+  /*
         go_ch1_switch.callback(cb_go_ch1_switch);
         go_ch1_reldim.callback(cb_go_ch1_reldim);
         go_ch1_absdim.callback(cb_go_ch1_absdim);
         go_ch1_color.callback(cb_go_ch1_color);
-  
+  */
 }
 
 void Dimmer::setStart()
