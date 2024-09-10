@@ -5,6 +5,7 @@ CW = Cold/Warm White
 RGB = RGB
 RGBW = RGB+White
 RGBCW = RGB+Cold/Warm White
+
 Possible outputs:
 3X  RGBCW
 or
