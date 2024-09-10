@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <knx.h>
-#include <dimmer.h>
+#include "dimmer.h"
 int ch_num = 0;
-Dimmer dimmer = new Dimmer();
+Dimmer dimmer(2);
 
 
 
@@ -12,15 +12,15 @@ void setup()
     if ( knx.configured() )
     {
       dimmer.init();
-      ch_num = knx.Parameter()
+      ch_num = knx.paramInt(2);
       dimmer.knxParam();
-      dimmmer.setupCallback();
+      dimmer.setupCallback();
     }
     else
     {
-          knx.progMode(on);
+          knx.progMode(true);
     }
-  dimmmer.setStart();
+  dimmer.setStart();
 }
 
 
