@@ -13,14 +13,14 @@ void setup()
     {
       dimmer.init();
       ch_num = knx.Parameter()
-      dimmer.calculate();
+      dimmer.knxParam();
       dimmmer.setupCallback();
     }
     else
     {
           knx.progMode(on);
     }
-  
+  dimmmer.setStart();
 }
 
 
