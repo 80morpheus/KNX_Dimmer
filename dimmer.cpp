@@ -21,7 +21,14 @@ void Dimmer:knxParam()
             ch_array[i].timeNight  = knx.param(6+i*10);
             ch_array[i].diffDimDay = ch_array[i].maxDimDay - ch_array[i].minDimDay;
             ch_array[i].diffDimNight = ch_array[i].maxDimNight - ch_array[i].minDimNight;
-            ch_array[i].setpoint = [5]; // rgb or cw maximum setpoint when max brightness
+            ch_array[i].setpointfix = [5]; // rgb or cw maximum setpoint when max brightness
+            ch_array[i].setpointfix[0] = knx.param(R-Wert);
+            ch_array[i].setpointfix[1] = knx.param(G-Wert);
+            ch_array[i].setpointfix[2] = knx.param(B-Wert);
+            ch_array[i].setpointfix[3] = knx.param(C-Wert);
+            ch_array[i].setpointfix[4] = knx.param(W-Wert);
+            ch_array[i].keepSetpoint = knx.param(); // wenn aus dann wieder mit standart wert dimmen anstatt temporär setpoint
+            ch_array[i].setpointtemp = [5]
         
             // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
             ch_array[i].tableDay = [5];  // RGBCW 
