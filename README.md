@@ -34,3 +34,17 @@ CH13 S
 CH14 S        
 CH15 S        
 CH16 S         
+
+
+# dimm bedingung
+single ist easy -> zwischen min und max
+
+cw -> ginge auch zwischen min und max
+      cw werte ???
+      ets regler für temperatur gibt prozentual an welche der beiden wo steht
+      links = nur c wird gesteuert und w ist dann 0
+      mitte = beide selber wert
+      rechts = nur w wird gesteuert und c ist dann 0
+
+rgb -> 
+
