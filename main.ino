@@ -13,6 +13,7 @@ void setup()
     {
       dimmer.init();
       ch_num = knx.Parameter()
+      dimmer.calculate();
       dimmmer.setupCallback();
     }
     else
