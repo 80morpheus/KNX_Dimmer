@@ -1,11 +1,14 @@
-int ch_array = {ch_num}
+int ch_array = [ch_num];
+int stepSecond = 20; // how manny dimming steps per second
+unsigned int timer = 0;
+int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
 
 void Dimmer::init()
 {
 pca.init;
 }
 
-void Dimmer:calculate()
+void Dimmer:knxParam()
 {
     for ( int i=1 ; i<ch_num ; i++ )
     {
@@ -16,10 +19,25 @@ void Dimmer:calculate()
             ch_array[i].maxDimNight  = knx.param(4+i*10);
             ch_array[i].timeDay    = knx.param(5+i*10);
             ch_array[i].timeNight  = knx.param(6+i*10);
-            ch_array[i].tableDay = [5];  // RGBCW 
-            ch_array[i].tableNight = [5];  // RGBCW
             ch_array[i].diffDimDay = ch_array[i].maxDimDay - ch_array[i].minDimDay;
             ch_array[i].diffDimNight = ch_array[i].maxDimNight - ch_array[i].minDimNight;
+            ch_array[i].setpoint = [5]; // rgb or cw maximum setpoint when max brightness
+        
+            // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
+            ch_array[i].tableDay = [5];  // RGBCW 
+            for ( int j=0; j<5 ; j++) { ch_array[i].tableDay[i]=[];     ch_array[i].tableDay[0]=0;     }
+            ch_array[i].tableNight = [5];  // RGBCW
+            for ( int j=0; j<5 ; j++) { ch_array[i].tableNight[i]=[];   ch_array[i].tableNight[0]=0;   }
+            ch_array[i].dimPos = 0;
+            // if single white led
+            if ( ch_array[i].chType == 1)
+            {
+                    for ( int j=1; j< ch_array[i].timeDay*stepSecond ; j++)
+                    {   ch_array[i].tableDay[j] =     ch_array[i].diffDimDay / stepSecond * ch_array[i].timeDay * 16 ;     }
+                    for ( int j=1; j< ch_array[i].timeNight*stepSecond ; j++)
+                    {   ch_array[i].tableNight[j] =     ch_array[i].diffDimNight / stepSecond * ch_array[i].timeNight * 16 ;     }
+            }
+            // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
             
     }
 }
@@ -41,6 +59,22 @@ void Dimmer::setupCallback()
         go_ch1_absdim.callback(cb_go_ch1_absdim);
         go_ch1_color.callback(cb_go_ch1_color);
   
+}
+
+void Dimmer::setStart()
+{
+        timer=millis();
+}
+
+void Dimmer::loop()
+{
+        if ( timer+(1000/stepSecond) < millis() )
+        {
+                for ( int i=1 ; i<ch_num ; i++)
+                {
+                        
+                }
+        }
 }
 
 
