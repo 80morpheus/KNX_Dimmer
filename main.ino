@@ -12,7 +12,10 @@ void setup()
     if ( knx.configured() )
     {
       dimmer.init();
-      ch_num = knx.paramInt(2);
+      for ( int i=1; i<17; i++)
+      {
+              if ( knx.paramInt(i) > 0 )   {ch_num++ ;  }
+      }
       dimmer.knxParam();
       dimmer.setupCallback();
     }
