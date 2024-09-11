@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include <knx.h>
 
@@ -32,6 +33,23 @@ public:
     void cb_go_ch1_color(GroupObject& go);
 
 
+};
+
+class ConfigKnx
+{
+public:
+	int chType;
+	int minDimDay;
+	int minDimNight;
+	int maxDimDay;
+	int maxDimNight;
+	int timeDay;
+	int timeNight;
+	int setpointFix[5];
+	int keepSetpoint;
+	int diffDimDay;
+	int diffDimNight;
+	int setpointTemp[5];
 };
 
 #endif
