@@ -1,7 +1,7 @@
 #include "dimmer.h"
-int ch_num = 8;
+int ch_num = 0;
 //int ch_array[ch_num];
-int ch_array[8];
+int ch_array[];
 int stepSecond = 20; // how manny dimming steps per second
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
@@ -14,11 +14,11 @@ void Dimmer::init()
 //pca.init;
 }
 
-void Dimmer::knxParam()
+void Dimmer::knxParam(int _ch_num)
 {
-    for ( int i=1 ; i<ch_num ; i++ )
+    for ( int i=1 ; i<_ch_num ; i++ )
     {
-      
+            ch_num = _ch_num;
             ch_array[i].chType     = knx.param(0+i*10);
             ch_array[i].minDimDay   = knx.param(1+i*10);
             ch_array[i].minDimNight = knx.param(2+i*10);
