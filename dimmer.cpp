@@ -1,7 +1,7 @@
 #include "dimmer.h"
-int ch_num = 0;
+int channel_number = 0;
 //int ch_array[ch_num];
-int ch_array[];
+int ch_array[16];
 int stepSecond = 20; // how manny dimming steps per second
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
@@ -18,25 +18,28 @@ void Dimmer::knxParam(int _ch_num)
 {
     for ( int i=1 ; i<_ch_num ; i++ )
     {
-            ch_num = _ch_num;
-            ch_array[i].chType     = knx.param(0+i*10);
-            ch_array[i].minDimDay   = knx.param(1+i*10);
-            ch_array[i].minDimNight = knx.param(2+i*10);
-            ch_array[i].maxDimDay    = knx.param(3+i*10);
-            ch_array[i].maxDimNight  = knx.param(4+i*10);
-            ch_array[i].timeDay    = knx.param(5+i*10);
-            ch_array[i].timeNight  = knx.param(6+i*10);
+            channel_number = _ch_num;
+            ConfigKnx ch_array[i];
+
+            
+            ch_array[i].chType     = knx.paramInt(0+i*10);
+            ch_array[i].minDimDay   = knx.paramInt(1+i*10);
+            ch_array[i].minDimNight = knx.paramInt(2+i*10);
+            ch_array[i].maxDimDay    = knx.paramInt(3+i*10);
+            ch_array[i].maxDimNight  = knx.paramInt(4+i*10);
+            ch_array[i].timeDay    = knx.paramInt(5+i*10);
+            ch_array[i].timeNight  = knx.paramInt(6+i*10);
             ch_array[i].diffDimDay = ch_array[i].maxDimDay - ch_array[i].minDimDay;
             ch_array[i].diffDimNight = ch_array[i].maxDimNight - ch_array[i].minDimNight;
-            ch_array[i].setpointfix = [5]; // rgb or cw maximum setpoint when max brightness
-            ch_array[i].setpointfix[0] = knx.param(R-Wert);
-            ch_array[i].setpointfix[1] = knx.param(G-Wert);
-            ch_array[i].setpointfix[2] = knx.param(B-Wert);
-            ch_array[i].setpointfix[3] = knx.param(C-Wert);
-            ch_array[i].setpointfix[4] = knx.param(W-Wert);
-            ch_array[i].keepSetpoint = knx.param(); // wenn aus dann wieder mit standart wert dimmen anstatt temporär setpoint
-            ch_array[i].setpointtemp = [5]
-        
+            //ch_array[i].setpointix[5]; // rgb or cw maximum setpoint when max brightness
+            ch_array[i].setpointFix[0] = knx.paramInt(10);  //R-Wert);
+            ch_array[i].setpointFix[1] = knx.paramInt(11);  //G-Wert);
+            ch_array[i].setpointFix[2] = knx.paramInt(12);  //B-Wert);
+            ch_array[i].setpointFix[3] = knx.paramInt(13);  //C-Wert);
+            ch_array[i].setpointFix[4] = knx.paramInt(14);  //W-Wert);
+            ch_array[i].keepSetpoint = knx.paramInt(15); // wenn aus dann wieder mit standart wert dimmen anstatt temporär setpoint
+            //ch_array[i].setpointTemp[5];
+        /*
             // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
             ch_array[i].tableDay = [5];  // RGBCW 
             for ( int j=0; j<5 ; j++) { ch_array[i].tableDay[i]=[];     ch_array[i].tableDay[0]=0;     }
@@ -87,7 +90,7 @@ void Dimmer::loop()
 {
         if ( timer+(1000/stepSecond) < millis() )
         {
-                for ( int i=1 ; i<ch_num ; i++)
+                for ( int i=1 ; i<channel_number ; i++)
                 {
                         
                 }
