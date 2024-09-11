@@ -16,7 +16,7 @@ void setup()
       {
               if ( knx.paramInt(i) > 0 )   {ch_num++ ;  }
       }
-      dimmer.knxParam();
+      dimmer.knxParam(ch_num);
       dimmer.setupCallback();
     }
     else
