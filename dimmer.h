@@ -21,7 +21,7 @@ public:
     Dimmer(int number);
     void setup();
     void init();
-    void knxParam();
+    void knxParam(int _ch_num);
     void setGroupObject();
     void setupCallback();
     void setStart();
