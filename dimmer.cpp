@@ -2,7 +2,7 @@
 int channel_number = 0;
 //int ch_array[ch_num];
 int ch_array[16];
-int stepSecond = 20; // how manny dimming steps per second
+#define stepsPerSecond = 20; // how manny dimming steps per second
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
 
@@ -38,6 +38,8 @@ void Dimmer::knxParam(int _ch_num)
             ch_array[i].setpointFix[4] = knx.paramInt(14);  //W-Wert);
             ch_array[i].keepSetpoint = knx.paramInt(15); // wenn aus dann wieder mit standart wert dimmen anstatt temporär setpoint
             //ch_array[i].setpointTemp[5];
+
+
         
             // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
             ch_array[i].diffDimDay = ch_array[i].maxDimDay - ch_array[i].minDimDay;
@@ -46,22 +48,27 @@ void Dimmer::knxParam(int _ch_num)
             ch_array[i].tableNight[0] =0;
             ch_array[i].tableDay[1] = ch_array[i].minDimDay;
             ch_array[i].tableNight[1] = ch_array[i].minDimNight;
-            int stepsDay=2
-            int stepsNight=2
-            for (; stepsDay > (ch_array[i].diffDimDay / ch_array[i].timeDay * 20) ; stepsDay++ )
-                {ch_array[i].tableDay[stepsDay] = (stepsDay-1) * ( ch_array[i].diffDimDay / ch_array[i].timeDay * 20 )  ;  }
-            for (; stepsNight > (ch_array[i].diffDimNight / ch_array[i].timeNight * 20) ; stepsNight++ )
-                {ch_array[i].tableDay[stepsNight] = (stepsNight-1) * ( ch_array[i].diffDimNight / ch_array[i].timeNight * 20 )  ;  }
-            ch_array[i].tableDay[stepsDay] = ch_array[i].maxDimDay;
-            ch_array[i].tableNight[stepsNight] = ch_array[i].maxDimNight;
+            ch_array[i].stepsDay=2;
+            ch_array[i].stepsNight=2;
+            for (; ch_array[i].stepsDay > Int(ch_array[i].diffDimDay / ch_array[i].timeDay * stepsPerSecond) ; ch_array[i].stepsDay++ )
+                {ch_array[i].tableDay[stepsDay] = (ch_array[i].stepsDay-1) * ( ch_array[i].diffDimDay / ch_array[i].timeDay * stepsPerSecond )  ;  }
+            for (; ch_array[i].stepsNight > Int(ch_array[i].diffDimNight / ch_array[i].timeNight * stepsPerSecond) ; ch_array[i].stepsNight++ )
+                {ch_array[i].tableDay[ch_array[i].stepsNight] = (ch_array[i].stepsNight-1) * ( ch_array[i].diffDimNight / ch_array[i].timeNight * stepsPerSecond )  ;  }
+            ch_array[i].stepsDay++;
+            ch_array[i].stepsNight++;
+            ch_array[i].tableDay[ch_array[i].stepsDay] = ch_array[i].maxDimDay;
+            ch_array[i].tableNight[ch_array[i].stepsNight] = ch_array[i].maxDimNight;
             // version mit vordefinierter dimm tabelle --- eigentlich blödsinn
 
+
+        
             // dimmwert berechnen
             // dimmwerte sind 0 - min - xxx - max
             // xxx ist schrittweite - max-min / zeit für dimmen bei 50ms pro durchlauf = 20 mal pro sekunde wert ändern optional 10 mal pro sekunde
             ch_array[i].diffDimDay = ch_array[i].maxDimDay - ch_array[i].minDimDay;
             ch_array[i].diffDimNight = ch_array[i].maxDimNight - ch_array[i].minDimNight;
-            ch_array[i].dimmstep = 
+            ch_array[i].dimStepDay = ch_array[i].diffDimDay /ch_array[i].timeDay * stepsPerSecond; 
+            ch_array[i].dimStepNight = ch_array[i].diffDimNight /ch_array[i].timeNight * stepsPerSecond;
             // dimmwert berechnen
         
     }
