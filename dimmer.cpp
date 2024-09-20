@@ -5,6 +5,7 @@ int ch_array[16];
 #define stepsPerSecond = 20; // how manny dimming steps per second - less then 100 -  more then 1
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
+bool night = 0; // 0 = Day --- 1 = Night
 
 Dimmer::Dimmer(int number)
 {}
@@ -120,34 +121,47 @@ void Dimmer::loop()
                         switch (ch_array[i].toDo)        
                             case 1:
                                     // dimmer for abs value
-                                    if ( ch_array[i].value > ch_array[i].setpoint ) {   setChannel(i, ch_array[i].value - ch_array[i].dimStepDay) ; }
-                                    if ( ch_array[i].value < ch_array[i].setpoint ) {   setChannel(i, ch_array[i].value + ch_array[i].dimStepDay) ; }
-                                    if ( ch_array[i].value - ch_array[i].setpoint < ch_array[i].stepDay || ch_array[i].setpoint - ch_array[i].value < ch_array[i].stepDay ) 
+                                    if ( ch_array[i].value > ch_array[i].setpoint && !night) {   ch_array[i].value -= ch_array[i].dimStepDay) ; }
+                                    if ( ch_array[i].value < ch_array[i].setpoint && !night) {   ch_array[i].value += ch_array[i].dimStepDay) ; }
+                                    if ( ch_array[i].value > ch_array[i].setpoint &&  night) {   ch_array[i].value -= ch_array[i].dimStepNight) ; }
+                                    if ( ch_array[i].value < ch_array[i].setpoint &&  night) {   ch_array[i].value += ch_array[i].dimStepNight) ; }
+                                    if ( ( ch_array[i].value - ch_array[i].setpoint < ch_array[i].stepDay   && !night ) || 
+                                         ( ch_array[i].setpoint - ch_array[i].value < ch_array[i].stepDay   && !night ) ||
+                                         ( ch_array[i].value - ch_array[i].setpoint < ch_array[i].stepNight && night  ) || 
+                                         ( ch_array[i].setpoint - ch_array[i].value < ch_array[i].stepNight && night  ) ) 
                                             { ch_array[i].toDo = 0; ch_array[i].value = ch_array[i].setpoint; }
                                     setChannel(i, ch_array[i].value);
                                     break;
                             case 2:
                                     // dimmer to min value
-                                    if ( ch_array[i].value > ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].value - ch_array[i].dimStepDay ; }
-                                    if ( ch_array[i].value < ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].minDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value > ch_array[i].minDimDay   && !night ) { ch_array[i].value -= ch_array[i].dimStepNight ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimDay   && !night ) { ch_array[i].value = ch_array[i].minDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value > ch_array[i].minDimNight && night  ) { ch_array[i].value -= ch_array[i].dimStepNight ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimNight && night  ) { ch_array[i].value = ch_array[i].minDimNight; ch_array[i].toDo = 0 }
                                     setChannel(i, ch_array[i].value);
                                     break;
                             case 3:
                                     // dimmer to max value
-                                    if ( ch_array[i].value < ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].value + ch_array[i].dimStepDay ; }
-                                    if ( ch_array[i].value > ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value < ch_array[i].maxDimDay   && !night ) { ch_array[i].value += ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimDay   && !night ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value < ch_array[i].maxDimNight && night  ) { ch_array[i].value += ch_array[i].dimStepNight ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimNight && night  ) { ch_array[i].value = ch_array[i].maxDimNight; ch_array[i].toDo = 0 }
                                     setChannel(i, ch_array[i].value);
                                     break;
                             case 4:
                                     // dimmer to off
-                                    if ( ch_array[i].value > ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].value - ch_array[i].dimStepDay ; }
-                                    if ( ch_array[i].value < ch_array[i].minDimDay ) { ch_array[i].value = 0; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value > ch_array[i].minDimDay   && !night ) { ch_array[i].value -= ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimDay   && !night ) { ch_array[i].value = 0; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value > ch_array[i].minDimNight && night  ) { ch_array[i].value -= ch_array[i].dimStepNight ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimNight && night  ) { ch_array[i].value = 0; ch_array[i].toDo = 0 }
                                     setChannel(i, ch_array[i].value);
                                     break;
                             case 5:
                                     // dimmer to on
-                                    if ( ch_array[i].value < ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].value + ch_array[i].dimStepDay ; }
-                                    if ( ch_array[i].value > ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value < ch_array[i].maxDimDay   && !night ) { ch_array[i].value += ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimDay   && !night ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    if ( ch_array[i].value < ch_array[i].maxDimNight && night  ) { ch_array[i].value += ch_array[i].dimStepNight ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimNight && night  ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
                                     setChannel(i, ch_array[i].value);
                                     break;
                         
