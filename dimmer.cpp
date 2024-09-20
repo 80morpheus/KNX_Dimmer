@@ -2,7 +2,7 @@
 int channel_number = 0;
 //int ch_array[ch_num];
 int ch_array[16];
-#define stepsPerSecond = 20; // how manny dimming steps per second
+#define stepsPerSecond = 20; // how manny dimming steps per second - less then 100 -  more then 1
 unsigned int timer = 0;
 int todoList = 0; // 0=nothing todo --- 1=dimm off --- 2=dim on --- 3=rgb
 
@@ -14,6 +14,11 @@ void Dimmer::init()
 //pca.init;
 }
 
+void Dimmer::setChannel(int _number, int _value)
+{
+    // set pca
+}
+
 void Dimmer::knxParam(int _ch_num)
 {
     for ( int i=1 ; i<_ch_num ; i++ )
@@ -21,15 +26,20 @@ void Dimmer::knxParam(int _ch_num)
             channel_number = _ch_num;
             ConfigKnx ch_array[i];
 
-            
-            ch_array[i].chType     = knx.paramInt(0+i*10);
-            ch_array[i].minDimDay   = knx.paramInt(1+i*10);
-            ch_array[i].minDimNight = knx.paramInt(2+i*10);
-            ch_array[i].maxDimDay    = knx.paramInt(3+i*10);
-            ch_array[i].maxDimNight  = knx.paramInt(4+i*10);
-            ch_array[i].timeDay    = knx.paramInt(5+i*10);
-            ch_array[i].timeNight  = knx.paramInt(6+i*10);
+            ch_array[i].active       = knx.ParamInt(0+i+10);
+            ch_array[i].chType       = knx.paramInt(1+i*10);
+            ch_array[i].minDimDay    = knx.paramInt(2+i*10);
+            ch_array[i].minDimNight  = knx.paramInt(3+i*10);
+            ch_array[i].maxDimDay    = knx.paramInt(4+i*10);
+            ch_array[i].maxDimNight  = knx.paramInt(5+i*10);
+            ch_array[i].timeDay      = knx.paramInt(6+i*10);
+            ch_array[i].timeNight    = knx.paramInt(7+i*10);
+            ch_array[i].stwayTime    = knx.paramInt(8+i*10);
+            ch_array[i].stwayTrig    = knx.paramInt(9+i*10);
+            ch_array[i].toDo         = 0;                        // 0 = nothing to do --- 1 = dimming for abs --- 2 = dimming to min --- 3 = dimming to max --- 4 = off dimming --- 5 = on dimming
 
+
+            // RGB VERSION
             //ch_array[i].setpointix[5]; // rgb or cw maximum setpoint when max brightness
             ch_array[i].setpointFix[0] = knx.paramInt(10);  //R-Wert);
             ch_array[i].setpointFix[1] = knx.paramInt(11);  //G-Wert);
@@ -103,21 +113,27 @@ void Dimmer::setStart()
 
 void Dimmer::loop()
 {
-        if ( timer+(1000/stepSecond) < millis() )
+        if ( timer+(1000/stepsPerSecond) < millis() )
         {
                 for ( int i=1 ; i<channel_number ; i++)
                 {
-                        
+                        if ( ch_array[i].toDo == 1 )
                 }
         }
 }
 
 
 void Dimmer::cb_go_ch1_switch(GroupObject& go)
-{}
+{
+    if ( go.value == on  ) { ch_array[0].todo = 5; }
+    if ( go.value == off ) { ch_array[0].toDo = 4; }
+}
 void Dimmer::cb_go_ch1_reldim(GroupObject& go)
-{}
+{ 
+    if ( go.value == up) {ch_array[0].toDo = 3;}
+    if ( go.value == down) {ch_array[0].toDo = 2;}
+}
 void Dimmer::cb_go_ch1_absdim(GroupObject& go)
-{}
+{ ch_array[0].setpoint = go.value ; ch_array[0].toDo = 2;}
 void Dimmer::cb_go_ch1_color(GroupObject& go)
 {}
