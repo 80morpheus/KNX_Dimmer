@@ -117,7 +117,40 @@ void Dimmer::loop()
         {
                 for ( int i=1 ; i<channel_number ; i++)
                 {
-                        if ( ch_array[i].toDo == 1 )
+                        switch (ch_array[i].toDo)        
+                            case 1:
+                                    // dimmer for abs value
+                                    if ( ch_array[i].value > ch_array[i].setpoint ) {   setChannel(i, ch_array[i].value - ch_array[i].dimStepDay) ; }
+                                    if ( ch_array[i].value < ch_array[i].setpoint ) {   setChannel(i, ch_array[i].value + ch_array[i].dimStepDay) ; }
+                                    if ( ch_array[i].value - ch_array[i].setpoint < ch_array[i].stepDay || ch_array[i].setpoint - ch_array[i].value < ch_array[i].stepDay ) 
+                                            { ch_array[i].toDo = 0; ch_array[i].value = ch_array[i].setpoint; }
+                                    setChannel(i, ch_array[i].value);
+                                    break;
+                            case 2:
+                                    // dimmer to min value
+                                    if ( ch_array[i].value > ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].value - ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].minDimDay; ch_array[i].toDo = 0 }
+                                    setChannel(i, ch_array[i].value);
+                                    break;
+                            case 3:
+                                    // dimmer to max value
+                                    if ( ch_array[i].value < ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].value + ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    setChannel(i, ch_array[i].value);
+                                    break;
+                            case 4:
+                                    // dimmer to off
+                                    if ( ch_array[i].value > ch_array[i].minDimDay ) { ch_array[i].value = ch_array[i].value - ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value < ch_array[i].minDimDay ) { ch_array[i].value = 0; ch_array[i].toDo = 0 }
+                                    setChannel(i, ch_array[i].value);
+                                    break;
+                            case 5:
+                                    // dimmer to on
+                                    if ( ch_array[i].value < ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].value + ch_array[i].dimStepDay ; }
+                                    if ( ch_array[i].value > ch_array[i].maxDimDay ) { ch_array[i].value = ch_array[i].maxDimDay; ch_array[i].toDo = 0 }
+                                    setChannel(i, ch_array[i].value);
+                                    break;
+                        
                 }
         }
 }
@@ -128,12 +161,18 @@ void Dimmer::cb_go_ch1_switch(GroupObject& go)
     if ( go.value == on  ) { ch_array[0].todo = 5; }
     if ( go.value == off ) { ch_array[0].toDo = 4; }
 }
+
 void Dimmer::cb_go_ch1_reldim(GroupObject& go)
 { 
     if ( go.value == up) {ch_array[0].toDo = 3;}
     if ( go.value == down) {ch_array[0].toDo = 2;}
 }
+
 void Dimmer::cb_go_ch1_absdim(GroupObject& go)
-{ ch_array[0].setpoint = go.value ; ch_array[0].toDo = 2;}
+{ 
+    ch_array[0].setpoint = go.value ; 
+    ch_array[0].toDo = 2;
+}
+
 void Dimmer::cb_go_ch1_color(GroupObject& go)
 {}
