@@ -1,4 +1,6 @@
 # KNX Dimmer
+up to 16 channels possible
+depends on the configuration
 
 W = Single
 CW = Cold/Warm White
